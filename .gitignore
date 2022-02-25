@@ -1,0 +1,7 @@
+# Default ignored files
+/shelf/
+.idea/
+test/
+target/
+src/main/resources/
+*.xml
