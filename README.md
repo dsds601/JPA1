@@ -144,3 +144,14 @@ EntityManagerFactory emf = Persistence.createEntityManagerFactory("hello");
         * 자연키(주민,전화번호) 적절치 않음 /  먼 미래까지 변하지않고 위 조건을 만족하는 키 대리키 이용 (sequence...) 업무로직과 상관없는 키
         * 주민등록번호도 적절하지않음
         * 권장 Long 타입 + 대체키 + 키 생성전략
+
+### JPA1
+
+* JPA 테이블 설계방식을 데이터베이스설계와 맞게 하면 객체 그래프 탐색이 불가능
+* 전혀 객체지향스럽지 않음
+~~~
+ex)
+Order order = em.find(Order.class, 1L);
+Long memberId = order.getMemberId();
+Member member = em.find(Member.class, memberId);
+~~~
