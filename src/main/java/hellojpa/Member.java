@@ -7,7 +7,7 @@ import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.Date;
 
-@Entity
+//@Entity
 @Getter
 @Setter
 public class Member {
