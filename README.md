@@ -97,7 +97,8 @@ EntityManagerFactory emf = Persistence.createEntityManagerFactory("hello");
         * IDENTITY 전략
           * db에 커밋이 되어야 pk값을 알수 잇다 하지만 jpa는 영속성 컨텍스트에 넣으려면 pk값을 알아야 사용가능 -> id 값으로 entity찾음
             * identity 전략은 그래서 예외적으로 em.pesist 호출 시점에 디비에 insert를 한다. 커밋시점이 아니라 persist 할때 isnert됨
-             그래서 transaction이 끝나지않고 persist 만해도 객체를 찾을수 있습니다. 
+             그래서 transaction이 끝나지않고 persist 만해도 객체를 찾을수 있습니다.
+        * #### JPA 에 pk키는 persist 영속상태만 되어도 디비에 들어가 있게 되어있다.
         ~~~
         mysql 일 경우 autoincrement
         @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -154,4 +155,46 @@ ex)
 Order order = em.find(Order.class, 1L);
 Long memberId = order.getMemberId();
 Member member = em.find(Member.class, memberId);
+~~~
+
+### 연관관계 매핑
+* 객체와 테이블 연관관계 차이를 이해 해야한다. 객체는 참조변수를 찾아 간다. 테이블은 외래키를 찾는다.
+* 외래키가 다른곳에 있다는 의미는 그쪽이 다 주키가 잇는곳이 1이다.
+
+### 단방향 연관관계
+* 객체지향 모델링 -> 외래키를 넣을곳에 객체를 넣는다.
+  * Jpa에게 연관관계를 알려줘야한다 1:1 1:N N:1 ManyToMany ManyToOne ...
+
+### 양방향 연관관계와 연관관계의 주인
+차이점 테이블은 pk fk면 충분 객체는 서로 참조할 수 있는 참조값이 있어야한다. 다 관계인 경우 list형태
+* 테이블에 경우에 pk fk 가 있으면 서로 찾을 수 있지만 객체에 경우에는 다르다.
+* 객체는 서로 참조할수 변수가 있어야한다. 객체는 서로 알 수 있도록 참조값을 넣어둔다.
+* 1 인 관계에는 list형태에 fk를 넣는다.
+### mappedBy
+연결되어있는 변수명 작성  아래 예시는 Member 객체에 team 변수랑 연결되어있다.
+* mappedBy이해 위해서는 객체와 테이블관 연관관계 차이 이해가 필요
+    * #### 객체와 테이블 관계를 맺는 차이
+      * **객체 연관관계** = 2개
+        * 회원 -> 팀 : 연관관계 1개 (단방향)
+        * 팀 -> 회원 : 연관관계 1개 (단방향)
+      * **테이블 연관관계** = 1개
+        * 회원 <-> 팀의 연관관계 1개 (양방향)
+* 객체는 사실 양방향이 아니라 서로 다른 단방향관계 2개를 가지고 있는것이다.
+* 외래키는 두 단방향관계중 하나를 가지고 관리를 해야한다.
+* 양방향 매핑 규칙
+  * 연관관계의 주인만이 외래 키를 관리 (등록,수정) 변경가능
+  #### * 주인이 아닌쪽은 읽기만 가능
+  * 주인은 mappedBy 속성 사용x 주인이 아니면 mappedBy속성으로 주인지정
+  #### * 주인이 아닌 객체에서 mappedBy를 사용
+* **외래키가 있는 곳을 주인으로 설정!** list형 객체가 있는곳에 mappedBy를 건다. 팀에 업데이트 -> 멤버에도 쿼리가 나간다 이상합니다.
+* JoinColumn <-외래키 지정 **다(N) 쪽이 무조건 연관관계 주인** 많은쪽이 mappedBy ~ 다N 변수명
+~~~
+Team class
+@OneToMany(mappedBy = "team")
+    private List<Member> members = new ArrayList<>();
+    
+Member class
+@ManyToOne
+    @JoinColumn(name = "TEAM_ID") //fk 가 될 컬럼명 <- Team에 fk가 될 컬럼 이름
+    private Team team;
 ~~~

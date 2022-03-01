@@ -1,36 +1,27 @@
-//package hellojpa;
-//
-//import javax.persistence.*;
-//import java.math.BigDecimal;
-//import java.util.Date;
-//
-//@Entity
-//public class Member {
-//
-//    @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    private Long id;
-//
-//    @Column(name="name", nullable = false)
-//    private String username;
-//
-//    public Member(){
-//
-//    }
-//
-//    public Long getId() {
-//        return id;
-//    }
-//
-//    public void setId(Long id) {
-//        this.id = id;
-//    }
-//
-//    public String getUsername() {
-//        return username;
-//    }
-//
-//    public void setUsername(String username) {
-//        this.username = username;
-//    }
-//}
+package hellojpa;
+
+import lombok.Getter;
+import lombok.Setter;
+
+import javax.persistence.*;
+import java.math.BigDecimal;
+import java.util.Date;
+
+@Entity
+@Getter
+@Setter
+public class Member {
+
+    @Id
+    @GeneratedValue
+    @Column(name = "MEMBER_ID")
+    private Long id;
+
+    @Column(name="USERNAME")
+    private String username;
+
+    //Member는 1 : Team 은 N 관계
+    @ManyToOne
+    @JoinColumn(name = "TEAM_ID") //fk 가 될 컬럼명 <- Team에 fk가 될 컬럼 이름  주키 여기서 수정 등록 가능
+    private Team team;
+}
