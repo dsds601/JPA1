@@ -5,7 +5,9 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 //@Entity
 @Getter
@@ -24,6 +26,9 @@ public class Member {
     @ManyToOne
     @JoinColumn(name = "TEAM_ID") //fk 가 될 컬럼명 <- Team에 fk가 될 컬럼 이름  주키 여기서 수정 등록 가능
     private Team team;
+
+    @OneToMany(mappedBy = "member")
+    private List<MemberProduct> memberProducts = new ArrayList<>();
 
     public void setTeam(Team team) {
         this.team = team;
